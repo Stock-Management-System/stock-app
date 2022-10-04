@@ -337,11 +337,20 @@ REST_FRAMEWORK = {
 }
 ```
 
-## 🚩 Create "signals.py" under "user" App and add 👇
+## 🔴 [SIGNALS](https://docs.djangoproject.com/en/4.1/topics/signals/) 👇
+
+🔹 Django include  a “signal dispatcher” which helps decoupled applications get notified when actions occur elsewhere in the framework.
+
+🔹 In   nutshell, signals allow certain senders to notify a set of receivers that some action has taken place.
+
+🔹 They’re especially useful when many pieces of code may be interested in the same events.
+
+## 🚩 Create "signals.py" under "api" folder and add 👇
 
 ```python
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+#! Sent before or after a model’s save() method is called. 👆
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
@@ -351,11 +360,21 @@ def create_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 ```
 
+## 🔴 Listening to signals 👉 Parameters:
+
+🔹 <b>receiver</b>: The callback function which will be connected to this signal. See Receiver functions for more information.
+
+🔹 <b>sender</b>: Specifies a particular sender to receive signals from. See Connecting to signals sent by specific senders for more information.
+
+🔹 <b>weak</b>: Django stores signal handlers as weak references by default. Thus, if your receiver is a local function, it may be garbage collected. To prevent this, pass weak=False when you call the signal’s connect() method.
+
+🔹 <b>dispatch_uid</b>: A unique identifier for a signal receiver in cases where duplicate signals may be sent. See Preventing duplicate signals for more information.
+
 ## 🚩 Go to "apps.py" and add this under UsersConfig() 👇
 
 ```python
-def ready(self) -> None:
-    import users.signals
+def ready(self):
+    import users.api.signals
 ```
 
 ## 🚩 Go to "api/views.py" and customize RegisterView()👇
@@ -378,16 +397,13 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         data = serializer.data
-        if Token.objects.filter(user=user).exists():
-            token = Token.objects.get(user=user)
-            data['token'] = token.key
-        else:
-            data['error'] = 'User does not have token. Please login'
+        token = Token.objects.get(user=user)
+        data["token"] = token.key
         headers = self.get_success_headers(serializer.data)
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 ```
 
-## 🚩 Override TokenSerializer() 👇
+## 🚩 Override TokenSerializer() in api.serializers.py 👇
 
 ```python
 from dj_rest_auth.serializers import TokenSerializer
