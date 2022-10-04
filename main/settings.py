@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     # my apps
     "users",
+    "stock",
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,12 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+REST_AUTH_SERIALIZER = {
+    'TOKEN_SERIALIZER': 'users.api.serializers.CustomTokenSerializer',
+}
