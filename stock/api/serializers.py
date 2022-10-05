@@ -30,3 +30,5 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         # fields = "__all__"
         exclude = ("price_total",)
+
+    
