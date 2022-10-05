@@ -32,7 +32,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(write_only=True)
     firm = serializers.StringRelatedField(read_only=True)     # default read_only=True
     firm_id = serializers.IntegerField(write_only=True)
-    product = ProductSerializer(many=True)
+    # product = ProductSerializer(many=True)
 
     class Meta:
         model = Transaction
