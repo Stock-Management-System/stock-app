@@ -41,7 +41,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         read_only_fields = ("price_total",)
 
     def create(self, validated_data):
-
         quantity = validated_data['quantity']
         price = validated_data['price']
         validated_data['price_total'] = quantity * price
